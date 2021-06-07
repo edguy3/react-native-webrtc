@@ -18,7 +18,6 @@ const MEDIA_STREAM_EVENTS = [
 export default class MediaStream extends EventTarget(MEDIA_STREAM_EVENTS) {
   id: string;
   active: boolean = true;
-
   onactive: ?Function;
   oninactive: ?Function;
   onaddtrack: ?Function;
@@ -37,7 +36,7 @@ export default class MediaStream extends EventTarget(MEDIA_STREAM_EVENTS) {
   _reactTag: string;
 
   /**
-   * A MediaStream can be constructed in several ways, depending on the paramters
+   * A MediaStream can be constructed in several ways, depending on the parameters
    * that are passed here.
    *
    * - undefined: just a new stream, with no tracks.
@@ -50,7 +49,7 @@ export default class MediaStream extends EventTarget(MEDIA_STREAM_EVENTS) {
   constructor(arg) {
       super();
 
-      // Assigm a UUID to start with. It may get overridden for remote streams.
+      // Assign a UUID to start with. It may get overridden for remote streams.
       this.id = uuid.v4();
       // Local MediaStreams are created by WebRTCModule to have their id and
       // reactTag equal because WebRTCModule follows the respective standard's

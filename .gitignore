@@ -9,4 +9,6 @@ android/build
 Podfile.lock
 WebRTC.xcframework
 WebRTC.dSYMs
-
+.vscode
+yarn.lock
+package-lock.json
