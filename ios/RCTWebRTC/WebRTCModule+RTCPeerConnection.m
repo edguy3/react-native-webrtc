@@ -269,14 +269,24 @@ RCT_EXPORT_METHOD(peerConnectionAddICECandidate:(RTCIceCandidate*)candidate obje
     RCTLogWarn(@"peerConnectionAddICECandidate called without candidate");
     return;
   }
+  @try
+  {
+    [peerConnection addIceCandidate:candidate];
 
-  [peerConnection addIceCandidate:candidate];
-
-  id newSdp = @{
-      @"type": [RTCSessionDescription stringForType:peerConnection.remoteDescription.type],
-      @"sdp": peerConnection.remoteDescription.sdp
-  };
-  callback(@[@true, newSdp]);
+    id newSdp = @{
+        @"type": [RTCSessionDescription stringForType:peerConnection.remoteDescription.type],
+        @"sdp": peerConnection.remoteDescription.sdp
+    };
+    callback(@[@true, newSdp]);
+  }
+  @catch(id anException) {
+    NSUncaughtExceptionHandler *handler = NSGetUncaughtExceptionHandler();
+    handler(anException);
+    // // [[Crashlytics sharedInstance] logException:anException];
+    // [[Crashlytics sharedInstance] recordCustomExceptionName: anException.name
+    //                                              reason: anException.reason
+    //                                          frameArray: stack];
+  }
 }
 
 RCT_EXPORT_METHOD(peerConnectionClose:(nonnull NSNumber *)objectID)
