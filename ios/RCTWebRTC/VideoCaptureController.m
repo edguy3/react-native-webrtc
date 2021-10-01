@@ -73,9 +73,9 @@
 
         return;
     }
-    
+
     [self registerSystemPressureStateObserverForDevice:self.device];
-    
+
     AVCaptureDeviceFormat *format
         = [self selectFormatForDevice:self.device
                       withTargetWidth:self.width
@@ -85,24 +85,39 @@
 
         return;
     }
-    
+
     self.selectedFormat = format;
 
     RCTLog(@"[VideoCaptureController] Capture will start");
 
     // Starting the capture happens on another thread. Wait for it.
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
-    __weak VideoCaptureController *weakSelf = self;
-    [self.capturer startCaptureWithDevice:self.device format:format fps:self.frameRate completionHandler:^(NSError *err) {
-        if (err) {
-            RCTLogError(@"[VideoCaptureController] Error starting capture: %@", err);
-        } else {
-            RCTLog(@"[VideoCaptureController] Capture started");
-            weakSelf.running = YES;
-        }
-        dispatch_semaphore_signal(semaphore);
-    }];
+
+    RCTLog(@"[VideoCaptureController] ETG1001 Capture will start");
+
+    @try
+    {
+        __weak VideoCaptureController *weakSelf = self;
+        [self.capturer startCaptureWithDevice:self.device format:format fps:self.frameRate completionHandler:^(NSError *err) {
+            if (err) {
+                RCTLogError(@"[VideoCaptureController] Error starting capture: %@", err);
+            } else {
+                RCTLog(@"[VideoCaptureController] Capture started");
+                weakSelf.running = YES;
+            }
+            dispatch_semaphore_signal(semaphore);
+        }];
+    }
+    @catch(id anException) {
+        RCTLogError(@"[VideoCaptureController] Error startCaptureWithDevice");
+        NSUncaughtExceptionHandler *handler = NSGetUncaughtExceptionHandler();
+        handler(anException);
+        RCTLogError(@"[VideoCaptureController] Error startCaptureWithDevice");
+        // // [[Crashlytics sharedInstance] logException:anException];
+        // [[Crashlytics sharedInstance] recordCustomExceptionName: anException.name
+        //                                              reason: anException.reason
+        //                                          frameArray: stack];
+    }
 
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 }
@@ -120,7 +135,7 @@
         RCTLog(@"[VideoCaptureController] Capture stopped");
         weakSelf.running = NO;
         weakSelf.device = nil;
-        
+
         dispatch_semaphore_signal(semaphore);
     }];
 
@@ -178,7 +193,7 @@
     if (device) {
         [self registerSystemPressureStateObserverForDevice:device];
     }
-    
+
     _device = device;
 }
 
@@ -218,31 +233,31 @@
 
 - (void)throttleFrameRateForDevice:(AVCaptureDevice *)device {
     NSError *error = nil;
-    
+
     [device lockForConfiguration:&error];
     if (error) {
         RCTLog(@"[VideoCaptureController] Could not lock device for configuration: %@", error);
         return;
     }
-    
+
     device.activeVideoMinFrameDuration = CMTimeMake(1, 20);
     device.activeVideoMaxFrameDuration = CMTimeMake(1, 15);
-    
+
     [device unlockForConfiguration];
 }
 
 - (void)resetFrameRateForDevice:(AVCaptureDevice *)device {
     NSError *error = nil;
-    
+
     [device lockForConfiguration:&error];
     if (error) {
         RCTLog(@"[VideoCaptureController] Could not lock device for configuration: %@", error);
         return;
     }
-    
+
     device.activeVideoMinFrameDuration = kCMTimeInvalid;
     device.activeVideoMaxFrameDuration = kCMTimeInvalid;
-    
+
     [device unlockForConfiguration];
 }
 
