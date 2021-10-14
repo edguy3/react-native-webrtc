@@ -74,8 +74,6 @@
         return;
     }
 
-    [self registerSystemPressureStateObserverForDevice:self.device];
-
     AVCaptureDeviceFormat *format
         = [self selectFormatForDevice:self.device
                       withTargetWidth:self.width
