@@ -224,14 +224,15 @@ class GetUserMediaImpl {
     }
 
     void mediaStreamTrackSetEnabled(String trackId, final boolean enabled) {
-        TrackPrivate track = tracks.get(trackId);
-        if (track != null && track.videoCaptureController != null) {
-            if (enabled) {
-                track.videoCaptureController.startCapture();
-            } else {
-                track.videoCaptureController.stopCapture();
-            }
-        }
+        // https://github.com/react-native-webrtc/react-native-webrtc/issues/643
+        // TrackPrivate track = tracks.get(trackId);
+        // if (track != null && track.videoCaptureController != null) {
+        //     if (enabled) {
+        //         track.videoCaptureController.startCapture();
+        //     } else {
+        //         track.videoCaptureController.stopCapture();
+        //     }
+        // }
     }
 
     void disposeTrack(String id) {

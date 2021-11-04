@@ -11,7 +11,6 @@ PACKAGE_VERSION=$(cat "${THIS_DIR}/../package.json" \
   | tr -d '[[:space:]]')
 WEBRTC_DL="https://github.com/react-native-webrtc/react-native-webrtc/releases/download/${PACKAGE_VERSION}/WebRTC.tar.xz"
 CACHED_DIR=~/.cache
-echo ${CACHED_DIR}
 CACHED_FILE="${CACHED_DIR}/WebRTC-${PACKAGE_VERSION}.tar.xz"
 
 
@@ -25,8 +24,8 @@ echo "Downloading files..."
 echo $PACKAGE_VERSION
 if [ -d "$CACHED_DIR" ]
 then
-  echo "Using Cache from ${CACHED_FILE}"
   [ -e "${CACHED_FILE}" ] || ( echo "Priming Cache..." && curl -L -s ${WEBRTC_DL} -o "${CACHED_FILE}")
+  echo "Using Cache in ${CACHED_FILE}"
   tar Jxf "${CACHED_FILE}"
 else
   echo curl -L -s ${WEBRTC_DL} | tar Jxf -
